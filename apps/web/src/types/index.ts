@@ -35,7 +35,14 @@ export interface ItineraryActivity {
   estimatedCost: string;
   transport: string;
   imageUrl: string;
+  imageSourceUrl?: string;
   category: string;
+  suggestedPlaces?: Array<{
+    name: string;
+    address: string;
+    specialty: string;
+    priceRange: string;
+  }>;
 }
 
 export interface ItineraryDay {
@@ -60,6 +67,59 @@ export interface TripItinerary {
   content: GeneratedItinerary | null;
   createdAt: string;
   updatedAt: string;
+  versionCount?: number;
+}
+
+export interface TripExpense {
+  id: string;
+  tripId: string;
+  title: string;
+  category: string;
+  amount: number;
+  paidBy: string;
+  spentAt: string;
+  createdAt: string;
+}
+
+export interface PackingItem {
+  id: string;
+  tripId: string;
+  name: string;
+  category: string;
+  quantity: number;
+  isPacked: boolean;
+  createdAt: string;
+}
+
+export interface TripCollaborator {
+  id: string;
+  tripId: string;
+  email: string;
+  role: 'VIEWER' | 'EDITOR';
+  createdAt: string;
+}
+
+export interface JournalEntry {
+  id: string;
+  tripId: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  entryDate: string;
+  createdAt: string;
+}
+
+export interface TripBooking {
+  id: string;
+  tripId: string;
+  type: string;
+  provider: string;
+  confirmation: string;
+  amount: number;
+  status: 'PLANNED' | 'BOOKED' | 'CANCELLED';
+  bookedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Trip {
@@ -75,6 +135,15 @@ export interface Trip {
   createdAt: string;
   updatedAt: string;
   itinerary: TripItinerary | null;
+  isPublic: boolean;
+  shareToken: string | null;
+  isOwner: boolean;
+  canEdit: boolean;
+  expenses: TripExpense[];
+  packingItems: PackingItem[];
+  collaborators: TripCollaborator[];
+  journalEntries: JournalEntry[];
+  bookings: TripBooking[];
 }
 
 export type RecCategory =
@@ -95,6 +164,8 @@ export interface RecommendationSummary {
   price: number;
   rating: number;
   reviewCount: number;
+  minTravelers: number;
+  maxTravelers: number;
   daysCount: number;
   createdAt: string;
   updatedAt: string;
@@ -102,6 +173,18 @@ export interface RecommendationSummary {
 
 export interface Recommendation extends RecommendationSummary {
   content: GeneratedItinerary | null;
+  reviews?: RecommendationReview[];
+}
+
+export interface RecommendationReview {
+  id: string;
+  recommendationId: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateRecommendationPayload {
@@ -115,6 +198,8 @@ export interface CreateRecommendationPayload {
   price?: number;
   rating?: number;
   reviewCount?: number;
+  minTravelers?: number;
+  maxTravelers?: number;
 }
 
 export interface UpdateRecommendationPayload
@@ -262,3 +347,41 @@ export type HeroSlideCreatePayload = {
   sortOrder?: number;
   isActive?: boolean;
 };
+
+export interface WeatherData {
+  available: boolean;
+  reason?: string;
+  place?: { latitude: number; longitude: number; name: string; country?: string };
+  daily?: {
+    time?: string[];
+    weather_code?: number[];
+    temperature_2m_max?: number[];
+    temperature_2m_min?: number[];
+    precipitation_probability_max?: number[];
+  } | null;
+}
+
+export interface TravelPassport {
+  totalTrips: number;
+  totalDays: number;
+  totalSpent: number;
+  destinations: string[];
+  badges: Array<{ id: string; icon: string; title: string; description: string }>;
+  timeline: Array<{
+    id: string;
+    destination: string;
+    startDate: string;
+    endDate: string;
+    coverImage: string;
+  }>;
+}
+
+export interface AppNotification {
+  id: string;
+  type: 'INFO' | 'WEATHER' | 'COLLABORATION' | 'BOOKING';
+  title: string;
+  message: string;
+  link: string;
+  isRead: boolean;
+  createdAt: string;
+}

@@ -8,6 +8,10 @@ import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/Home/HomePage';
+import AboutPage from './pages/About/AboutPage';
+import SupportPage from './pages/Support/SupportPage';
+import SharedTripPage from './pages/SharedTrip/SharedTripPage';
+import PassportPage from './pages/Passport/PassportPage';
 import LoginPage from './pages/Login/LoginPage';
 import RegisterPage from './pages/Register/RegisterPage';
 import CreateTripPage from './pages/CreateTrip/CreateTripPage';
@@ -35,6 +39,9 @@ export default function App() {
         {/* Public site */}
         <Route element={<MainLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="support" element={<SupportPage />} />
+          <Route path="shared/:token" element={<SharedTripPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="recommendations" element={<RecommendationsPage />} />
@@ -48,6 +55,7 @@ export default function App() {
             <Route path="trips" element={<MyTripsPage />} />
             <Route path="trips/:id" element={<TripDetailPage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="passport" element={<PassportPage />} />
           </Route>
         </Route>
 

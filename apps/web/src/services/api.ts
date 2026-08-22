@@ -5,7 +5,7 @@ const rawBaseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:10000'
 // Đảm bảo loại bỏ dấu / ở cuối nếu có để tránh bị double slash //
 const cleanBaseURL = rawBaseURL.replace(/\/+$/, ''); 
 
-const baseURL = `${cleanBaseURL}/api`;
+const baseURL = cleanBaseURL.endsWith('/api') ? cleanBaseURL : `${cleanBaseURL}/api`;
 
 const tokenStorage = {
   get(): string | null {

@@ -36,15 +36,15 @@ export default {
       },
       fontFamily: {
         sans: [
-          '"Segoe UI"',
-          '"Segoe UI Semibold"',
+          '"Plus Jakarta Sans"',
+          '"Outfit"',
           'system-ui',
           '-apple-system',
-          'Roboto',
-          '"Helvetica Neue"',
-          'Arial',
           'sans-serif',
         ],
+        outfit: ['"Outfit"', 'sans-serif'],
+        display: ['"Playfair Display"', 'serif'],
+        jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       boxShadow: {
         card: '0 10px 30px -10px rgba(20, 40, 90, 0.18)',

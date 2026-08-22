@@ -19,6 +19,9 @@ import {
   Recommendation,
   RecommendationSummary,
   Trip,
+  WeatherData,
+  TravelPassport,
+  AppNotification,
   UpdateProfilePayload,
   UpdateRecommendationPayload,
   UserProfile,
@@ -85,6 +88,70 @@ export const tripService = {
   async remove(id: string): Promise<void> {
     await api.delete(`/trips/${id}`);
   },
+  async shared(token: string): Promise<Trip> {
+    const { data } = await api.get<Trip>(`/trips/shared/${token}`);
+    return data;
+  },
+  async updateItinerary(id: string, content: GeneratedItinerary): Promise<Trip> {
+    const { data } = await api.patch<Trip>(`/trips/${id}/itinerary`, { content });
+    return data;
+  },
+  async replan(id: string, payload: { dayIndex?: number; activityIndex?: number; reason?: string }): Promise<Trip> {
+    const { data } = await aiApi.post<Trip>(`/trips/${id}/replan`, payload);
+    return data;
+  },
+  async toggleShare(id: string, enabled: boolean): Promise<{ isPublic: boolean; shareToken: string | null }> {
+    const { data } = await api.patch<{ isPublic: boolean; shareToken: string | null }>(`/trips/${id}/share`, { enabled });
+    return data;
+  },
+  async weather(id: string): Promise<WeatherData> {
+    const { data } = await api.get<WeatherData>(`/trips/${id}/weather`);
+    return data;
+  },
+  async passport(): Promise<TravelPassport> {
+    const { data } = await api.get<TravelPassport>('/trips/passport/summary');
+    return data;
+  },
+  async addExpense(id: string, payload: { title: string; category: string; amount: number; paidBy?: string }): Promise<void> {
+    await api.post(`/trips/${id}/expenses`, payload);
+  },
+  async removeExpense(id: string, expenseId: string): Promise<void> {
+    await api.delete(`/trips/${id}/expenses/${expenseId}`);
+  },
+  async addPacking(id: string, payload: { name: string; category?: string; quantity?: number }): Promise<void> {
+    await api.post(`/trips/${id}/packing`, payload);
+  },
+  async generatePacking(id: string): Promise<Trip> {
+    const { data } = await api.post<Trip>(`/trips/${id}/packing/generate`);
+    return data;
+  },
+  async updatePacking(id: string, itemId: string, payload: { isPacked?: boolean; quantity?: number }): Promise<void> {
+    await api.patch(`/trips/${id}/packing/${itemId}`, payload);
+  },
+  async removePacking(id: string, itemId: string): Promise<void> {
+    await api.delete(`/trips/${id}/packing/${itemId}`);
+  },
+  async invite(id: string, email: string, role: 'VIEWER' | 'EDITOR'): Promise<void> {
+    await api.post(`/trips/${id}/collaborators`, { email, role });
+  },
+  async removeCollaborator(id: string, collaboratorId: string): Promise<void> {
+    await api.delete(`/trips/${id}/collaborators/${collaboratorId}`);
+  },
+  async addJournal(id: string, payload: { title: string; content: string; imageUrl?: string; entryDate?: string }): Promise<void> {
+    await api.post(`/trips/${id}/journal`, payload);
+  },
+  async removeJournal(id: string, entryId: string): Promise<void> {
+    await api.delete(`/trips/${id}/journal/${entryId}`);
+  },
+  async addBooking(id: string, payload: { type: string; provider: string; confirmation?: string; amount?: number; status?: 'PLANNED' | 'BOOKED' | 'CANCELLED' }): Promise<void> {
+    await api.post(`/trips/${id}/bookings`, payload);
+  },
+  async updateBooking(id: string, bookingId: string, payload: { confirmation?: string; amount?: number; status?: 'PLANNED' | 'BOOKED' | 'CANCELLED' }): Promise<void> {
+    await api.patch(`/trips/${id}/bookings/${bookingId}`, payload);
+  },
+  async removeBooking(id: string, bookingId: string): Promise<void> {
+    await api.delete(`/trips/${id}/bookings/${bookingId}`);
+  },
 
   async generateItinerary(payload: CreateTripPayload): Promise<GeneratedItinerary> {
     const { data } = await aiApi.post<GeneratedItinerary>('/ai/generate', payload);
@@ -101,6 +168,19 @@ export const recommendationService = {
     const { data } = await api.get<Recommendation>(`/recommendations/${id}`);
     return data;
   },
+  async review(id: string, rating: number, content: string): Promise<Recommendation> {
+    const { data } = await api.post<Recommendation>(`/recommendations/${id}/reviews`, { rating, content });
+    return data;
+  },
+};
+
+export const notificationService = {
+  async list(): Promise<AppNotification[]> {
+    const { data } = await api.get<AppNotification[]>('/users/me/notifications');
+    return data;
+  },
+  async read(id: string): Promise<void> { await api.patch(`/users/me/notifications/${id}/read`); },
+  async readAll(): Promise<void> { await api.patch('/users/me/notifications/read-all'); },
 };
 
 export const favoriteService = {

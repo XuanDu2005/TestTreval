@@ -77,4 +77,23 @@ export class UsersService {
     });
     return { ok: true };
   }
+
+  async listNotifications(userId: string) {
+    return this.prisma.notification.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+  }
+
+  async markNotificationRead(userId: string, id: string) {
+    const notification = await this.prisma.notification.findFirst({ where: { id, userId } });
+    if (!notification) throw new NotFoundException('Notification not found');
+    return this.prisma.notification.update({ where: { id }, data: { isRead: true } });
+  }
+
+  async markAllNotificationsRead(userId: string) {
+    await this.prisma.notification.updateMany({ where: { userId, isRead: false }, data: { isRead: true } });
+    return { ok: true };
+  }
 }
